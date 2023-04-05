@@ -8,8 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HotLIB" Version="1.0.0-beta" />
+    <Compile Include="..\..\Hot\Hot\_HOT_globals.cs" Link="_HOT_globals.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Hot\Hot\Hot.csproj" />
   </ItemGroup>
 
 </Project>
