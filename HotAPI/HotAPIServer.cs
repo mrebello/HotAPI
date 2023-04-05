@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using Hot.HotAPIExtensions;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Hot {
 
@@ -151,6 +153,8 @@ namespace Hot {
             app.MapGet("/infos", Hot.AutoUpdate.Infos);
             app.MapGet("/routes", ListRoutes);
 
+            app.MapPut("/autoupdate", AutoUpdate_ReceiveFile);
+
             return app;
         }
 
@@ -166,9 +170,38 @@ namespace Hot {
         }
 
 
-        public virtual void Version(HttpListenerContext context) {
-            context.Response.Send(Config[HotConfiguration.ConfigConstants.AppName] + '\t' + Config[HotConfiguration.ConfigConstants.Version]);
+        public async Task AutoUpdate_ReceiveFile(HttpContext context) {
+            string configsecret = Config[ConfigConstants.Update.Secret];
+            string secret = context.Request.Headers["UpdateSecret"].ToString() ?? "";
+
+            if (configsecret != secret) {
+                L.LogError($"UpdateSecret inválido. IP: {context.IP_Origem()}");
+                await context.ForbidAsync();
+                await context.Response.WriteAsync("Não autorizado.");
+
+            } else {   // Recebe arquivo atualizado e salva na pasta do executável (se não tiver permissão, não pode atualizar)
+                long size = 0;
+                string tmpfile = Path.GetDirectoryName(Config[ConfigConstants.ExecutableFullName]) + Path.DirectorySeparatorChar + Path.GetRandomFileName();
+                try {
+                    await using var f = File.Create("tmpfile");
+                    await context.Request.Body.CopyToAsync(f);
+                    size = f.Length;
+                    f.Close();
+                } catch (Exception e) when (false) {
+                    L.LogError("Erro ao salvar arquivo da atualização.", e);
+                }
+
+                // Se salvou o arquivo corretamente
+                if (size > 0) {
+                    await context.Response.WriteAsync("Atualização recebida.");
+                    Hot.AutoUpdate.AutoUpdate_Process(tmpfile);
+                } else {
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    await context.Response.WriteAsync("Erro ao processar atualização.");
+                }
+            }
         }
+
 
         public virtual void Config_Changed(object state) {
             //var new_Prefixes = Prefixes_from_config();
