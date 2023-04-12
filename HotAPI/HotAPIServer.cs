@@ -187,7 +187,7 @@ namespace Hot {
                     await context.Request.Body.CopyToAsync(f);
                     size = f.Length;
                     f.Close();
-                } catch (Exception e) when (false) {
+                } catch (Exception e) {
                     L.LogError("Erro ao salvar arquivo da atualização.", e);
                 }
 
@@ -220,10 +220,12 @@ namespace Hot {
             Log.LogInformation("RECONFIGURADO");
         }
 
+#pragma warning disable CS1998 // O método assíncrono não possui operadores 'await' e será executado de forma síncrona
         async void Config_Changed_trap(object state) {
             Config_Changed(state);
             ((IConfiguration)Config).GetReloadToken().RegisterChangeCallback(Config_Changed_trap, default);
         }
+#pragma warning restore CS1998 // O método assíncrono não possui operadores 'await' e será executado de forma síncrona
 
 
         public override Task StartAsync(CancellationToken cancellationToken) {

@@ -1,22 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <OutputType>Library</OutputType>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<OutputType>Library</OutputType>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>HotAPI - APIs simples</Title>
+		<PackageIcon>HotLIB.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Deterministic>false</Deterministic>
+		<AssemblyVersion>1.0.*</AssemblyVersion>
+		<VersionPrefix>1.0.1</VersionPrefix>
+		<VersionSuffix>beta</VersionSuffix>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\..\Hot\Hot\_HOT_globals.cs" Link="_HOT_globals.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\..\Hot\Hot\_HOT_globals.cs" Link="_HOT_globals.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\Hot\Hot\HotLIB.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Hot\Hot\Hot.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Hot\Hot\Hot.csproj" />
+	</ItemGroup>
 
 </Project>
