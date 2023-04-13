@@ -91,7 +91,12 @@ namespace Hot {
                     //    Description = Config[ConfigConstants.ServiceDescription],
                     //});
                 };
-                b.Services.AddSwaggerGen(optSwaggerGen);
+                if (Config["HotAPI:Builder:SwaggerDefaultGET"].ToBool()) {  // Se SwaggerDefaultGET, usa SwaggerGen modificado, senão usa o original
+                    b.Services.AddSwaggerGen_Mod(optSwaggerGen);
+                } else {
+                    b.Services.AddSwaggerGen(optSwaggerGen);
+                }
+
             }
 
             Action<MvcOptions>? optMvc = o => {
