@@ -72,12 +72,17 @@ namespace Hot {
             if (Config["HotAPI:Builder:SwaggerGen"].ToBool()) {
                 Action<SwaggerGenOptions>? optSwaggerGen = options => {
                     if (Config["HotAPI:Builder:SwaggerGenXML"].ToBool()) {
-                        string filename = Path.ChangeExtension(Config[ConfigConstants.ExecutableFullName], ".xml");
-                        if (File.Exists(filename)) {
-                            options.IncludeXmlComments(filename, true);
+                        var stream = Config.GetAsmStream("API.xml");
+                        if (stream != null) {
+                            options.IncludeXmlComments(() => new System.Xml.XPath.XPathDocument(stream), true);
                         } else {
-                            Log.LogError("Documentação .xml não encontrada: " + filename);
-                        };
+                            string filename = Path.ChangeExtension(Config[ConfigConstants.ExecutableFullName], ".xml");
+                            if (File.Exists(filename)) {
+                                options.IncludeXmlComments(filename, true);
+                            } else {
+                                Log.LogError("Documentação .xml não encontrada: " + filename);
+                            };
+                        }
                     }
                     if (Config["HotAPI:Builder:BindRequiredForNonDefault"].ToBool())
                         options.ParameterFilter<Opt_SwaggerParameterFilter>();

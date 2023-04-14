@@ -7,12 +7,19 @@
 		<OutputType>Library</OutputType>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>HotAPI - APIs simples</Title>
+		<Description>
+			WebAPIs usando biblioteca de funções Hot.
+			Classe para criar WebAPIs com configurações do servidor em arquivo de configuração embutido na aplicação,
+			bastando alterar a configuração para incluir recursos na API.
+		</Description>
+		<VersionBase>1.0</VersionBase>
+		<VersionSuffix>-beta</VersionSuffix>
+		<AssemblyVersion>$(VersionBase).$([System.DateTime]::Now.Subtract("2000-01-01").Days).$([System.DateTime]::Now.TimeOfDay.TotalMinutes.ToString("0"))</AssemblyVersion>
+		<FileVersion>$(AssemblyVersion)</FileVersion>
+		<VersionPrefix>$(AssemblyVersion)</VersionPrefix>
+		<Version>$(VersionPrefix)$(VersionSuffix)</Version>
 		<PackageIcon>HotLIB.png</PackageIcon>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Deterministic>false</Deterministic>
-		<AssemblyVersion>1.0.*</AssemblyVersion>
-		<VersionPrefix>1.0.1</VersionPrefix>
-		<VersionSuffix>beta</VersionSuffix>
 		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 
