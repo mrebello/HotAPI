@@ -24,6 +24,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="appsettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Compile Include="..\..\Hot\Hot\_HOT_globals.cs" Link="_HOT_globals.cs" />
 	</ItemGroup>
 
@@ -32,6 +36,7 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+		<EmbeddedResource Include="appsettings.json" />
 	</ItemGroup>
 
 	<ItemGroup>
