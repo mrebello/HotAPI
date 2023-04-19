@@ -6,6 +6,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Hot.HotAPIExtensions;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace Hot {
 
