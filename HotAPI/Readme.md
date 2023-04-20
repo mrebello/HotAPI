@@ -1,6 +1,7 @@
 ﻿# HotAPI
 
-Biblioteca complementar à <a href="https://github.com/mrebello/HotLIB">HotLIB</a> para a criação de WebAPIs ou aplicações WEB.
+Biblioteca complementar a biblioteca <a href="https://github.com/mrebello/Hot">Hot</a> para a criação de WebAPIs ou aplicações WEB.
+
 
 
 

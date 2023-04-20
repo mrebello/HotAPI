@@ -53,14 +53,15 @@ namespace Hot {
         }
 
 
-        /// <summary>
-        /// Lista métodos encontrados
-        /// </summary>
-        public class ApiExplorerConvention : IActionModelConvention {
-            public void Apply(ActionModel action) {
-                Log.Create("HotAPI").LogInformation($"ApiExplorer: {action.ActionMethod}");
-            }
-        }
+        ///// <summary>
+        ///// Lista métodos encontrados
+        ///// </summary>
+        //public class ApiExplorerConvention : IActionModelConvention {
+        //    static bool SwaggerShowHotAPI = Config["SwaggerShowHotAPI"].ToBool();
+        //    public void Apply(ActionModel action) {
+        //        Log.Create("HotAPI").LogInformation($"ApiExplorer: {action.ActionMethod}");
+        //    }
+        //}
 
 
         WebApplicationBuilder Cria_Builder() {
@@ -108,6 +109,7 @@ namespace Hot {
             Action<MvcOptions>? optMvc = o => {
                 if (Config["HotAPI:Builder:BindRequiredForNonDefault"].ToBool())
                     o.ModelMetadataDetailsProviders.Add(new RequiredBindingMetadataProvider());
+                //o.Conventions.Add(new ApiExplorerConvention());
             };
             b.Services.AddMvc(optMvc);
 
@@ -160,10 +162,9 @@ namespace Hot {
 
             app.MapControllers(); // --> Colocado pelo AddMvc()
 
-            app.MapGet("/version", Hot.AutoUpdate.Version);
-            app.MapGet("/infos", Hot.AutoUpdate.Infos);
-            app.MapGet("/routes", ListRoutes);
-
+            app.MapGet("/version", version);
+            app.MapGet("/infos", infos);
+            app.MapGet("/routes", routes);
             app.MapPut("/autoupdate", AutoUpdate_ReceiveFile);
 
             return app;
@@ -181,6 +182,11 @@ namespace Hot {
         }
 
 
+        /// <summary>
+        /// Utilizado pelo recurso de 'autoupdate' da HotAPI.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task AutoUpdate_ReceiveFile(HttpContext context) {
             string configsecret = Config[ConfigConstants.Update.Secret];
             string secret = context.Request.Headers["UpdateSecret"].ToString() ?? "";
@@ -260,7 +266,12 @@ namespace Hot {
         }
 
 
-        public string ListRoutes(IEnumerable<EndpointDataSource> endpointSources) {
+        /// <summary>
+        /// Retorna com a lista de endpoints aceitos.
+        /// </summary>
+        /// <param name="endpointSources"></param>
+        /// <returns></returns>
+        public string routes(IEnumerable<EndpointDataSource> endpointSources) {
             var s = "";
             var endpoints = endpointSources.SelectMany(es => es.Endpoints);
             foreach (var endpoint in endpoints) {
@@ -284,6 +295,20 @@ namespace Hot {
             }
             return s; //.Replace(Environment.NewLine, "<br>");
         }
+
+        /// <summary>
+        /// Devolve a versão atual da aplicação e bibliotecas Hot.
+        /// </summary>
+        /// <returns></returns>
+        public string version() => Hot.AutoUpdate.Version();
+
+        /// <summary>
+        /// Devolve informações relativas à aplicação em execução.
+        /// </summary>
+        /// <returns></returns>
+        public string infos() => Hot.AutoUpdate.Infos();
+
+
     }
     //public class ResponseTime {
     //    RequestDelegate _next;
