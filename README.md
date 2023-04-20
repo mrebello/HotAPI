@@ -1,7 +1,8 @@
 # HotAPI
 
-Classe para criação de APIs encapsulando todas as dependências.
-Permite a criação, com documentação, de forma extremamente simples:
+Biblioteca complementar a biblioteca <a href="https://github.com/mrebello/Hot">Hot</a> para a criação de WebAPIs ou aplicações WEB.
+
+Permite a criação de APIs encapsulando todas as dependências de forma extremamente simples:
 
 	public class Program : HotAPIServer {
 	    public static void Main(string[] args) {
@@ -27,6 +28,8 @@ Permite a criação, com documentação, de forma extremamente simples:
 	    public int Soma(int a, int b) => a + b;
 	}
 
+<img src="https://github.com/mrebello/HotAPI/raw/master/Exemplo.jpg" />
+
 Para instalar o modelo de projeto da HotAPI para o Visual Studio 2022, use <a href="https://github.com/mrebello/HotAPI_Modelo/raw/master/HotAPI_Modelo_install.exe">este  instalador</a>.
 
 (O instalador extrai o arquivo HotAPI_Modelo.zip para a pasta
@@ -34,3 +37,4 @@ Para instalar o modelo de projeto da HotAPI para o Visual Studio 2022, use <a hr
 
 Após a instalação, vá em criar novo projeto e o HotAPI_Modelo aparecerá como modelo de projeto a ser criado.
 
+Mais detalhes <a href="https://github.com/mrebello/HotAPI/tree/master/HotAPI">aqui</a>.
