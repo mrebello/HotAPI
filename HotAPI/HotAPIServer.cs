@@ -24,7 +24,8 @@ namespace Hot {
                 if (_builder == null) {
                     _builder = Cria_Builder();
                 }
-                if (_app != null) throw new Exception("Acesso ao builder após app ter sido criada.");
+                if (_app != null)
+                    throw new Exception("Acesso ao builder após app ter sido criada.");
                 return _builder;
             }
         }
@@ -48,10 +49,19 @@ namespace Hot {
         /// </summary>
         class Opt_SwaggerParameterFilter : IParameterFilter {
             void IParameterFilter.Apply(OpenApiParameter parameter, ParameterFilterContext context) {
-                if (parameter.Schema.Default == null) parameter.Required = true;
+                if (parameter.Schema.Default == null)
+                    parameter.Required = true;
             }
         }
 
+        class Opt_SwaggerDocumentFilter : IDocumentFilter {
+            static bool SwaggerShowHotAPI = Config["HotAPI:Builder:SwaggerShowHotAPI"].ExpandConfig().ToBool();
+            public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context) {
+                if (!SwaggerShowHotAPI)
+                    swaggerDoc.Paths.Where(x => x.Key.StartsWith("/HotAPI/"))
+                        .ToList().ForEach(x => swaggerDoc.Paths.Remove(x.Key));
+            }
+        }
 
         ///// <summary>
         ///// Lista métodos encontrados
@@ -92,6 +102,8 @@ namespace Hot {
                     if (Config["HotAPI:Builder:SwaggerResolveConflictingActions"].ToBool())
                         options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 
+                    options.DocumentFilter<Opt_SwaggerDocumentFilter>();
+
                     //options.SwaggerDoc(Config[ConfigConstants.Version], new OpenApiInfo {
                     //    Version = Config[ConfigConstants.Version],
                     //    Title = Config[ConfigConstants.ServiceDisplayName],
@@ -131,7 +143,8 @@ namespace Hot {
             get {
                 lock (app_lock) {
                     if (_app == null) {
-                        if (builder == null) throw new Exception("Erro ao criar o builder.");
+                        if (builder == null)
+                            throw new Exception("Erro ao criar o builder.");
                         _app = Cria_App();
 
                         Initialize();
@@ -162,10 +175,10 @@ namespace Hot {
 
             app.MapControllers(); // --> Colocado pelo AddMvc()
 
-            app.MapGet("/version", version);
-            app.MapGet("/infos", infos);
-            app.MapGet("/routes", routes);
-            app.MapPut("/autoupdate", AutoUpdate_ReceiveFile);
+            app.MapGet("/HotAPI/version", version);
+            app.MapGet("/HotAPI/infos", infos);
+            app.MapGet("/HotAPI/routes", routes);
+            app.MapPut("/HotAPI/autoupdate", AutoUpdate_ReceiveFile);
 
             return app;
         }
@@ -306,7 +319,7 @@ namespace Hot {
         /// Devolve informações relativas à aplicação em execução.
         /// </summary>
         /// <returns></returns>
-        public string infos() => Hot.AutoUpdate.Infos();
+        public string infos() => Config.Infos();
 
 
     }
