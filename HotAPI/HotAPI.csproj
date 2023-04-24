@@ -18,6 +18,7 @@
 		<FileVersion>$(AssemblyVersion)</FileVersion>
 		<VersionPrefix>$(AssemblyVersion)</VersionPrefix>
 		<Version>$(VersionPrefix)$(VersionSuffix)</Version>
+		<IncludeSymbols>True</IncludeSymbols>
 		<PackageIcon>HotLIB.png</PackageIcon>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<IsPackable>true</IsPackable>
