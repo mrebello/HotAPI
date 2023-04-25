@@ -7,10 +7,8 @@
 		<OutputType>Library</OutputType>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>HotAPI - APIs simples</Title>
-		<Description>
-			WebAPIs usando biblioteca de funções Hot.
-			Classe para criar WebAPIs com configurações do servidor em arquivo de configuração embutido na aplicação,
-			bastando alterar a configuração para incluir recursos na API.
+		<Description>WebAPIs usando biblioteca de funções Hot.
+Classe para criar WebAPIs com configurações do servidor em arquivo de configuração embutido na aplicação, bastando alterar a configuração para incluir recursos na API.
 		</Description>
 		<VersionBase>1.0</VersionBase>
 		<VersionSuffix>-beta</VersionSuffix>
@@ -22,6 +20,11 @@
 		<PackageIcon>HotLIB.png</PackageIcon>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<IsPackable>true</IsPackable>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Copyright>Marcos Paulo Ferreira Rebello</Copyright>
+		<PackageProjectUrl>https://github.com/mrebello/HotAPI</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/mrebello/HotAPI</RepositoryUrl>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -46,6 +49,13 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Hot\Hot\Hot.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 </Project>

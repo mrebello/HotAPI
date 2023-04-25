@@ -12,9 +12,9 @@ public class HotAPIServer : SelfHostedService {
     private WebApplicationBuilder? _builder = null;
     private WebApplication? _app = null;
 
-    ILogger L = Log.Create("HotAPI");
+    ILogger Log = LogCreate("HotAPI");
 
-    /// <summary>
+        /// <summary>
     /// WebApplicationBuilder padrão. Deve ser configurado no método Configure()
     /// </summary>
     public WebApplicationBuilder builder {
@@ -90,7 +90,7 @@ public class HotAPIServer : SelfHostedService {
                         if (File.Exists(filename)) {
                             options.IncludeXmlComments(filename, true);
                         } else {
-                            Log.LogError("Documentação .xml não encontrada: " + filename);
+                            HotLog.log.Log.LogError("Documentação .xml não encontrada: " + filename);
                         };
                     }
                 }
@@ -182,7 +182,7 @@ public class HotAPIServer : SelfHostedService {
     }
 
     ~HotAPIServer() {
-        L.LogInformation("~HotAPI: Fechando aplicação");
+        Log.LogInformation("~HotAPI: Fechando aplicação");
         app?.DisposeAsync();
     }
 
@@ -203,7 +203,7 @@ public class HotAPIServer : SelfHostedService {
         string secret = context.Request.Headers["UpdateSecret"].ToString() ?? "";
 
         if (configsecret != secret) {
-            L.LogError($"UpdateSecret inválido. IP: {context.IP_Origem()}");
+            Log.LogError($"UpdateSecret inválido. IP: {context.IP_Origem()}");
             await context.ForbidAsync();
             await context.Response.WriteAsync("Não autorizado.");
 
@@ -216,7 +216,7 @@ public class HotAPIServer : SelfHostedService {
                 size = f.Length;
                 f.Close();
             } catch (Exception e) {
-                L.LogError("Erro ao salvar arquivo da atualização.", e);
+                Log.LogError("Erro ao salvar arquivo da atualização.", e);
             }
 
             // Se salvou o arquivo corretamente
@@ -245,7 +245,7 @@ public class HotAPIServer : SelfHostedService {
         //    Log.LogWarning("ignorePrefix foi alterado.");
         //    ignorePrefix = new_IgnorePrefix;
         //}
-        Log.LogInformation("RECONFIGURADO");
+        HotLog.log.Log.LogInformation("RECONFIGURADO");
     }
 
 #pragma warning disable CS1998 // O método assíncrono não possui operadores 'await' e será executado de forma síncrona
