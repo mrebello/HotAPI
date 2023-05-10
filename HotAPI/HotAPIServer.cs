@@ -53,7 +53,7 @@ public class HotAPIServer : SelfHostedService {
     }
 
     class Opt_SwaggerDocumentFilter : IDocumentFilter {
-        static bool SwaggerShowHotAPI = Config["HotAPI:Builder:SwaggerShowHotAPI"].ExpandConfig().ToBool();
+        static bool SwaggerShowHotAPI = Config["HotAPI:Builder:SwaggerShowHotAPI"]!.ExpandConfig().ToBool();
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context) {
             if (!SwaggerShowHotAPI)
                 swaggerDoc.Paths.Where(x => x.Key.StartsWith("/HotAPI/"))
@@ -79,14 +79,14 @@ public class HotAPIServer : SelfHostedService {
         b.Configuration.AddConfiguration(HotConfiguration.configuration);
         b.Services.AddLogging(HotLog.LoggingCreate);
 
-        if (Config["HotAPI:Builder:SwaggerGen"].ToBool()) {
+        if (Config["HotAPI:Builder:SwaggerGen"]!.ToBool()) {
             Action<SwaggerGenOptions>? optSwaggerGen = options => {
-                if (Config["HotAPI:Builder:SwaggerGenXML"].ToBool()) {
+                if (Config["HotAPI:Builder:SwaggerGenXML"]!.ToBool()) {
                     var stream = Config.GetAsmStream("API.xml");
                     if (stream != null) {
                         options.IncludeXmlComments(() => new System.Xml.XPath.XPathDocument(stream), true);
                     } else {
-                        string filename = Path.ChangeExtension(Config[ConfigConstants.ExecutableFullName], ".xml");
+                        string filename = Path.ChangeExtension(Config[ConfigConstants.ExecutableFullName]!, ".xml");
                         if (File.Exists(filename)) {
                             options.IncludeXmlComments(filename, true);
                         } else {
@@ -94,10 +94,10 @@ public class HotAPIServer : SelfHostedService {
                         };
                     }
                 }
-                if (Config["HotAPI:Builder:BindRequiredForNonDefault"].ToBool())
+                if (Config["HotAPI:Builder:BindRequiredForNonDefault"]!.ToBool())
                     options.ParameterFilter<Opt_SwaggerParameterFilter>();
 
-                if (Config["HotAPI:Builder:SwaggerResolveConflictingActions"].ToBool())
+                if (Config["HotAPI:Builder:SwaggerResolveConflictingActions"]!.ToBool())
                     options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 
                 options.DocumentFilter<Opt_SwaggerDocumentFilter>();
@@ -108,7 +108,7 @@ public class HotAPIServer : SelfHostedService {
                 //    Description = Config[ConfigConstants.ServiceDescription],
                 //});
             };
-            if (Config["HotAPI:Builder:SwaggerDefaultGET"].ToBool()) {  // Se SwaggerDefaultGET, usa SwaggerGen modificado, senão usa o original
+            if (Config["HotAPI:Builder:SwaggerDefaultGET"]!.ToBool()) {  // Se SwaggerDefaultGET, usa SwaggerGen modificado, senão usa o original
                 b.Services.AddSwaggerGen_Mod(optSwaggerGen);
             } else {
                 b.Services.AddSwaggerGen(optSwaggerGen);
@@ -117,16 +117,16 @@ public class HotAPIServer : SelfHostedService {
         }
 
         Action<MvcOptions>? optMvc = o => {
-            if (Config["HotAPI:Builder:BindRequiredForNonDefault"].ToBool())
+            if (Config["HotAPI:Builder:BindRequiredForNonDefault"]!.ToBool())
                 o.ModelMetadataDetailsProviders.Add(new RequiredBindingMetadataProvider());
             //o.Conventions.Add(new ApiExplorerConvention());
         };
         b.Services.AddMvc(optMvc);
 
-        if (Config["HotAPI:Builder:Controllers"].ToBool())
+        if (Config["HotAPI:Builder:Controllers"]!.ToBool())
             b.Services.AddControllers();
 
-        if (Config["HotAPI:Builder:AddEndpointsApiExplorer"].ToBool())
+        if (Config["HotAPI:Builder:AddEndpointsApiExplorer"]!.ToBool())
             b.Services.AddEndpointsApiExplorer();
 
         return b;
@@ -164,11 +164,11 @@ public class HotAPIServer : SelfHostedService {
             option.EnableDeepLinking();
         };
 
-        if (Config["HotAPI:App:Swagger"].ToBool())
+        if (Config["HotAPI:App:Swagger"]!.ToBool())
             app.UseSwagger();
-        if (Config["HotAPI:App:SwaggerUI"].ToBool())
+        if (Config["HotAPI:App:SwaggerUI"]!.ToBool())
             app.UseSwaggerUI();
-        if (Config["HotAPI:App:HttpsRedirection"].ToBool())
+        if (Config["HotAPI:App:HttpsRedirection"]!.ToBool())
             app.UseHttpsRedirection();
 
         app.MapControllers(); // --> Colocado pelo AddMvc()
@@ -199,7 +199,7 @@ public class HotAPIServer : SelfHostedService {
     /// <param name="context"></param>
     /// <returns></returns>
     public async Task AutoUpdate_ReceiveFile(HttpContext context) {
-        string configsecret = Config[ConfigConstants.Update.Secret];
+        string configsecret = Config[ConfigConstants.Update.Secret]!;
         string secret = context.Request.Headers["UpdateSecret"].ToString() ?? "";
 
         if (configsecret != secret) {
@@ -231,7 +231,7 @@ public class HotAPIServer : SelfHostedService {
     }
 
 
-    public virtual void Config_Changed(object state) {
+    public virtual void Config_Changed(object? state) {
         //var new_Prefixes = Prefixes_from_config();
         //if (!prefixes.SequenceEqual(new_Prefixes)) {
         //    Log.LogWarning("Configuração de Prefixes foi alterada. Reiniciando Listener.");
@@ -249,7 +249,7 @@ public class HotAPIServer : SelfHostedService {
     }
 
 #pragma warning disable CS1998 // O método assíncrono não possui operadores 'await' e será executado de forma síncrona
-    async void Config_Changed_trap(object state) {
+    async void Config_Changed_trap(object? state) {
         Config_Changed(state);
         ((IConfiguration)Config).GetReloadToken().RegisterChangeCallback(Config_Changed_trap, default);
     }
