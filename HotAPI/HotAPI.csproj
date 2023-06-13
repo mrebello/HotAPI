@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<OutputType>Library</OutputType>
@@ -10,6 +10,7 @@
 		<Description>WebAPIs usando biblioteca de funções Hot.
 Classe para criar WebAPIs com configurações do servidor em arquivo de configuração embutido na aplicação, bastando alterar a configuração para incluir recursos na API.
 		</Description>
+		<Copyright>Marcos Paulo Ferreira Rebello</Copyright>
 		<VersionBase>1.0</VersionBase>
 		<VersionSuffix>-beta</VersionSuffix>
 		<AssemblyVersion>$(VersionBase).$([System.DateTime]::Now.Subtract("2000-01-01").Days).$([System.DateTime]::Now.TimeOfDay.TotalMinutes.ToString("0"))</AssemblyVersion>
@@ -17,14 +18,20 @@ Classe para criar WebAPIs com configurações do servidor em arquivo de configur
 		<VersionPrefix>$(AssemblyVersion)</VersionPrefix>
 		<Version>$(VersionPrefix)$(VersionSuffix)</Version>
 		<IncludeSymbols>True</IncludeSymbols>
-		<PackageIcon>HotLIB.png</PackageIcon>
+		<PackageId>HotAPI</PackageId>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<IsPackable>true</IsPackable>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Copyright>Marcos Paulo Ferreira Rebello</Copyright>
 		<PackageProjectUrl>https://github.com/mrebello/HotAPI</PackageProjectUrl>
+		<PackageIcon>HotLIB.png</PackageIcon>
 		<RepositoryUrl>https://github.com/mrebello/HotAPI</RepositoryUrl>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Platforms>AnyCPU;x64</Platforms>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<UserSecretsId>Senhas</UserSecretsId>
+		<Authors>$(Authors)</Authors>
+		<IsPublishable>False</IsPublishable>
 	</PropertyGroup>
 
 	<ItemGroup>

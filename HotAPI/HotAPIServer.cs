@@ -12,21 +12,51 @@ public class HotAPIServer : SelfHostedService {
     private WebApplicationBuilder? _builder = null;
     private WebApplication? _app = null;
 
+    /// <summary>
+    /// Overwrite to define WebApplicationOptions
+    /// </summary>
+    /// <returns></returns>
+    public virtual WebApplicationOptions? WebApplicationOptions() { return null; }
+
     ILogger Log = LogCreate("HotAPI");
 
-        /// <summary>
+    /// <summary>
     /// WebApplicationBuilder padrão. Deve ser configurado no método Configure()
     /// </summary>
+    static readonly object builder_lock = new Object();
+
     public WebApplicationBuilder builder {
         get {
-            if (_builder == null) {
-                _builder = Cria_Builder();
+            lock (builder_lock) {
+                if (_builder == null) {
+                    _builder = Cria_Builder();
+                }
+                if (_app != null)
+                    throw new Exception("Acesso ao builder após app ter sido criada.");
             }
-            if (_app != null)
-                throw new Exception("Acesso ao builder após app ter sido criada.");
             return _builder;
         }
     }
+
+
+    /// <summary>
+    /// WebApplication criada a partir do builder automaticamente no primeiro acesso.
+    /// Deve ser configurada após as configurações do builder no método Configure()
+    /// </summary>
+    static readonly object app_lock = new Object();
+    public WebApplication app {
+        get {
+            lock (app_lock) {
+                if (_app == null) {
+                    if (builder == null)
+                        throw new Exception("Erro ao criar o builder.");
+                    _app = Cria_App();
+                }
+            }
+            return _app;
+        }
+    }
+
 
 
     /// <summary>
@@ -75,7 +105,9 @@ public class HotAPIServer : SelfHostedService {
     WebApplicationBuilder Cria_Builder() {
         WebApplicationBuilder b;
 
-        b = WebApplication.CreateBuilder(Environment.GetCommandLineArgs());
+        WebApplicationOptions? AppOptions = WebApplicationOptions();
+        b = (AppOptions is null) ? WebApplication.CreateBuilder() : WebApplication.CreateBuilder(AppOptions);
+
         b.Configuration.AddConfiguration(HotConfiguration.configuration);
         b.Services.AddLogging(HotLog.LoggingCreate);
 
@@ -129,27 +161,9 @@ public class HotAPIServer : SelfHostedService {
         if (Config["HotAPI:Builder:AddEndpointsApiExplorer"]!.ToBool())
             b.Services.AddEndpointsApiExplorer();
 
+        Config_Builder(b);
+
         return b;
-    }
-
-    /// <summary>
-    /// WebApplication criada a partir do builder automaticamente no primeiro acesso.
-    /// Deve ser configurada após as configurações do builder no método Configure()
-    /// </summary>
-    static readonly object app_lock = new Object();
-    public WebApplication app {
-        get {
-            lock (app_lock) {
-                if (_app == null) {
-                    if (builder == null)
-                        throw new Exception("Erro ao criar o builder.");
-                    _app = Cria_App();
-
-                    Initialize();
-                }
-            }
-            return _app;
-        }
     }
 
     WebApplication Cria_App() {
@@ -178,6 +192,8 @@ public class HotAPIServer : SelfHostedService {
         app.MapGet("/HotAPI/routes", routes);
         app.MapPut("/HotAPI/autoupdate", AutoUpdate_ReceiveFile);
 
+        Config_App(app);
+
         return app;
     }
 
@@ -187,9 +203,18 @@ public class HotAPIServer : SelfHostedService {
     }
 
     /// <summary>
-    /// Método que pode ser implementado para configurar builder (opcional) e app (obrigatório).
+    /// Método que pode ser implementado para configurar builder (opcional).
+    /// Chamado antes de b.Build()
     /// </summary>
-    public virtual void Initialize() {
+    public virtual void Config_Builder(WebApplicationBuilder builder) {
+    }
+
+
+    /// <summary>
+    /// Método que pode ser implementado para configurar app (opcional).
+    /// Chamado antes de app.Run()
+    /// </summary>
+    public virtual void Config_App(WebApplication app) {
     }
 
 
