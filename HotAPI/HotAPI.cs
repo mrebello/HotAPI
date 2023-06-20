@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Hot {
+﻿namespace Hot {
     [ApiController]
     [Route("[controller]/[action]")]
     public class HotAPI : Controller {

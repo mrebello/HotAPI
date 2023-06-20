@@ -1,37 +1,41 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<OutputType>Library</OutputType>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
 		<Title>HotAPI - APIs simples</Title>
 		<Description>WebAPIs usando biblioteca de funções Hot.
 Classe para criar WebAPIs com configurações do servidor em arquivo de configuração embutido na aplicação, bastando alterar a configuração para incluir recursos na API.
 		</Description>
+		
 		<Copyright>Marcos Paulo Ferreira Rebello</Copyright>
+		<Authors>$(Authors)</Authors>
+
 		<VersionBase>1.0</VersionBase>
 		<VersionSuffix>-beta</VersionSuffix>
 		<AssemblyVersion>$(VersionBase).$([System.DateTime]::Now.Subtract("2000-01-01").Days).$([System.DateTime]::Now.TimeOfDay.TotalMinutes.ToString("0"))</AssemblyVersion>
 		<FileVersion>$(AssemblyVersion)</FileVersion>
 		<VersionPrefix>$(AssemblyVersion)</VersionPrefix>
 		<Version>$(VersionPrefix)$(VersionSuffix)</Version>
-		<IncludeSymbols>True</IncludeSymbols>
+
+		<Platforms>AnyCPU</Platforms>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageProjectUrl>https://github.com/mrebello/HotAPI</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/mrebello/HotAPI</RepositoryUrl>
+		<PackageIcon>HotLIB.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageId>HotAPI</PackageId>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<IsPackable>true</IsPackable>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Copyright>Marcos Paulo Ferreira Rebello</Copyright>
-		<PackageProjectUrl>https://github.com/mrebello/HotAPI</PackageProjectUrl>
-		<PackageIcon>HotLIB.png</PackageIcon>
-		<RepositoryUrl>https://github.com/mrebello/HotAPI</RepositoryUrl>
+
+		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<Platforms>AnyCPU;x64</Platforms>
-		<PlatformTarget>AnyCPU</PlatformTarget>
 		<UserSecretsId>Senhas</UserSecretsId>
-		<Authors>$(Authors)</Authors>
-		<IsPublishable>False</IsPublishable>
+		<OutputType>Library</OutputType>
+		<OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -47,6 +51,11 @@ Classe para criar WebAPIs com configurações do servidor em arquivo de configur
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+		<None Include="README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
+
 		<EmbeddedResource Include="appsettings.json" />
 	</ItemGroup>
 

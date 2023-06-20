@@ -1,11 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.SwaggerUI;
-using Hot.HotAPIExtensions;
-using Microsoft.AspNetCore.Authentication;
-
 namespace Hot; 
 
 public class HotAPIServer : SelfHostedService {
@@ -256,33 +248,10 @@ public class HotAPIServer : SelfHostedService {
     }
 
 
-    public virtual void Config_Changed(object? state) {
-        //var new_Prefixes = Prefixes_from_config();
-        //if (!prefixes.SequenceEqual(new_Prefixes)) {
-        //    Log.LogWarning("Configuração de Prefixes foi alterada. Reiniciando Listener.");
-        //    prefixes = new_Prefixes;
-        //    await StopAsync(default);
-        //    await StartAsync(default);
-        //}
-
-        //var new_IgnorePrefix = IgnorePrefix_from_config();
-        //if (new_IgnorePrefix != ignorePrefix) {
-        //    Log.LogWarning("ignorePrefix foi alterado.");
-        //    ignorePrefix = new_IgnorePrefix;
-        //}
-        HotLog.log.Log.LogInformation("RECONFIGURADO");
-    }
-
-#pragma warning disable CS1998 // O método assíncrono não possui operadores 'await' e será executado de forma síncrona
-    async void Config_Changed_trap(object? state) {
-        Config_Changed(state);
-        ((IConfiguration)Config).GetReloadToken().RegisterChangeCallback(Config_Changed_trap, default);
-    }
-#pragma warning restore CS1998 // O método assíncrono não possui operadores 'await' e será executado de forma síncrona
-
 
     public override Task StartAsync(CancellationToken cancellationToken) {
-        ((IConfiguration)Config).GetReloadToken().RegisterChangeCallback(Config_Changed_trap, default);
+        base.StartAsync(cancellationToken);
+
         if (app == null)
             throw new Exception("Erro ao criar app");
 
