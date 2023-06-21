@@ -1,4 +1,6 @@
-namespace Hot; 
+using Microsoft.Extensions.FileProviders;
+
+namespace Hot;
 
 public class HotAPIServer : SelfHostedService {
     private WebApplicationBuilder? _builder = null;
@@ -176,6 +178,21 @@ public class HotAPIServer : SelfHostedService {
             app.UseSwaggerUI();
         if (Config["HotAPI:App:HttpsRedirection"]!.ToBool())
             app.UseHttpsRedirection();
+
+        List<IFileProvider> fileProviders = new();
+        if (Config["HotAPI:App:UsePhysicalStaticFiles"]!.ToBool()) {
+            var hostEnvironment = app.Services.GetService<IHostEnvironment>();
+            var path = Path.Combine(hostEnvironment!.ContentRootPath, "wwwroot");
+            if (Directory.Exists(path))
+                fileProviders.Add(new PhysicalFileProvider(path));
+        }
+        if (Config["HotAPI:App:UseEmbeddedStaticFiles"]!.ToBool()) {
+            fileProviders.Add(new EmbeddedFileProvider(Config.GetAsmResource, Config.GetAsmResource.GetName().Name + ".wwwroot"));
+        }
+        if (fileProviders.Count > 0) {
+            var compositeProvider = new CompositeFileProvider(fileProviders.ToArray());
+            app.UseStaticFiles(new StaticFileOptions { FileProvider = compositeProvider });
+        }
 
         app.MapControllers(); // --> Colocado pelo AddMvc()
 
