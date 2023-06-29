@@ -191,7 +191,11 @@ public class HotAPIServer : SelfHostedService {
         }
         if (fileProviders.Count > 0) {
             var compositeProvider = new CompositeFileProvider(fileProviders.ToArray());
-            app.UseStaticFiles(new StaticFileOptions { FileProvider = compositeProvider });
+            app.UseStaticFiles(new StaticFileOptions {
+                FileProvider = compositeProvider,
+                ServeUnknownFileTypes = true,
+                DefaultContentType = "text/plain"
+            });
         }
 
         app.MapControllers(); // --> Colocado pelo AddMvc()
