@@ -23,15 +23,4 @@ public class CDN {
         }
     }
     public string? local_fallback { get; set; }
-
-    private static async Task<bool> checkUrl(string url) {
-        try {
-            using (HttpClient client = new HttpClient()) {
-                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
-                return response.IsSuccessStatusCode;
-            }
-        } catch {
-            return false;
-        }
-    }
 }
