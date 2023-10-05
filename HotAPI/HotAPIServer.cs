@@ -314,8 +314,8 @@ public class HotAPIServer : SelfHostedService {
 
             var httpMethodsMetadata = endpoint.Metadata.OfType<HttpMethodMetadata>().FirstOrDefault();
             //s += httpMethodsMetadata?.HttpMethods + Environment.NewLine; // [GET, POST, ...]
-
-            s += $"{endpoint} => {httpMethodsMetadata?.HttpMethods.Dump().TrimEnd('\n')}\n";
+            String? rota = (endpoint as RouteEndpoint)?.RoutePattern.RawText.Envelop("(",")");
+            s += $"{endpoint} {rota}=> {httpMethodsMetadata?.HttpMethods.Dump().TrimEnd('\n')}\n";
 
             // There are many more metadata types available...
         }
