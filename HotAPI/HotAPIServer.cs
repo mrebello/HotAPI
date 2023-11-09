@@ -198,7 +198,18 @@ public class HotAPIServer : SelfHostedService {
             });
         }
 
-        app.MapControllers(); // --> Colocado pelo AddMvc()
+        if (Config["HotAPI:App:UseDeveloperExceptionPage"]!.ToBool())
+            app.UseDeveloperExceptionPage();
+
+        if (Config["HotAPI:App:UseAuthentication"]!.ToBool())
+            app.UseAuthentication();
+
+        if (Config["HotAPI:App:UseAuthorization"]!.ToBool()) { 
+            app.UseAuthorization();
+            app.MapControllers().RequireAuthorization(); // --> Colocado pelo AddMvc()
+        } else {
+            app.MapControllers(); // --> Colocado pelo AddMvc()
+        }
 
         app.MapGet("/HotAPI/version", version);
         app.MapGet("/HotAPI/infos", infos);
