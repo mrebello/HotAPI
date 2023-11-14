@@ -155,6 +155,11 @@ public class HotAPIServer : SelfHostedService {
         if (Config["HotAPI:Builder:AddEndpointsApiExplorer"]!.ToBool())
             b.Services.AddEndpointsApiExplorer();
 
+#if NET8_0_OR_GREATER
+        if (Config["HotAPI:App:UseAuthentication"]!.ToBool())   // Se usa autenticação, adiciona CascadingAuthenticationState automaticamente
+            b.Services.AddCascadingAuthenticationState();
+#endif
+
         Config_Builder(b);
 
         return b;
