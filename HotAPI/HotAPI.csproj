@@ -60,7 +60,7 @@ Classe para criar WebAPIs com configurações do servidor em arquivo de configur
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="HotLIB" Version="1.0.8775.927-beta" />
+		<PackageReference Include="HotLIB" Version="1.0.8781.570-beta" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
 
