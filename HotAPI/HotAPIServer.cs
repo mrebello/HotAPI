@@ -1,4 +1,5 @@
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Hot;
 
@@ -134,7 +135,7 @@ public class HotAPIServer : SelfHostedService {
                 //    Description = Config[ConfigConstants.ServiceDescription],
                 //});
             };
-            if (Config["HotAPI:Builder:SwaggerDefaultGET"]!.ToBool()) {  // Se SwaggerDefaultGET, usa SwaggerGen modificado, senão usa o original
+            if (!Config["HotAPI:Builder:SwaggerDefaultMethod"]!.IsNullOrEmpty()) {  // Se SwaggerDefaultMethod não é vazio, usa SwaggerGen modificado, senão usa o original
                 b.Services.AddSwaggerGen_Mod(optSwaggerGen);
             } else {
                 b.Services.AddSwaggerGen(optSwaggerGen);

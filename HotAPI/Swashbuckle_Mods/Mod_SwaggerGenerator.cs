@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -145,8 +146,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen {
             return paths;
         }
 
-        // --- ADICIONADA LINHA DE BAIXO
-        static bool SwaggerDefaultGET = Config["HotAPI:Builder:SwaggerDefaultGET"].ToBool();
+        // --- ADICIONADA LINHA ABAIXO
+        static string SwaggerDefaultMethod = Config["HotAPI:Builder:SwaggerDefaultMethod"]!;
 
         private IDictionary<OperationType, OpenApiOperation> GenerateOperations(
             IEnumerable<ApiDescription> apiDescriptions,
@@ -159,8 +160,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen {
             foreach (var group in apiDescriptionsByMethod) {
                 var httpMethod = group.Key;
 
-                // --- ADICIONADA LINHA DE BAIXO
-                if (httpMethod == null && SwaggerDefaultGET) httpMethod = HttpMethods.Get;
+                // --- ADICIONADA LINHA ABAIXO
+                if (httpMethod == null && !SwaggerDefaultMethod.IsNullOrEmpty()) httpMethod = SwaggerDefaultMethod;
 
                 if (httpMethod == null)
                     throw new SwaggerGeneratorException(string.Format(
