@@ -60,7 +60,7 @@ Classe para criar WebAPIs com configurações do servidor em arquivo de configur
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="9.0.0-preview.4.24267.6">
+		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="8.0.8">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -68,7 +68,7 @@ Classe para criar WebAPIs com configurações do servidor em arquivo de configur
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>
