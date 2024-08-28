@@ -174,6 +174,15 @@ public class HotAPIServer : SelfHostedService {
 
         Config.__Set_ServiceProvider(app.Services, 675272);    // Seta provedor de serviços para os serviços da WebApplication ao invés do SelfHost
 
+        string pathBase = Config["IgnorePrefix"] ?? "";
+        if (pathBase != "") {
+            app.UsePathBase(pathBase);
+            //app.Use((context, next) => {
+            //    context.Request.PathBase = new PathString(pathBase);
+            //    return next();
+            //});
+        }
+
         Action<SwaggerUIOptions> optSwaggerUIOptions = option => {
             option.EnableDeepLinking();
         };
@@ -266,12 +275,12 @@ public class HotAPIServer : SelfHostedService {
             long size = 0;
             string tmpfile = Path.GetDirectoryName(Config[ConfigConstants.ExecutableFullName]) + Path.DirectorySeparatorChar + Path.GetRandomFileName();
             try {
-                await using var f = File.Create("tmpfile");
+                await using var f = File.Create(tmpfile);
                 await context.Request.Body.CopyToAsync(f);
                 size = f.Length;
                 f.Close();
             } catch (Exception e) {
-                Log.LogError("Erro ao salvar arquivo da atualização.", e);
+                Log.LogError(e, "Erro ao salvar arquivo da atualização \" + tmpfile + \".");
             }
 
             // Se salvou o arquivo corretamente
