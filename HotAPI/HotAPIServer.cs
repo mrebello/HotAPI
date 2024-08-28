@@ -257,6 +257,7 @@ public class HotAPIServer : SelfHostedService {
     }
 
 
+    [RequestSizeLimit(100_000_000)]
     /// <summary>
     /// Utilizado pelo recurso de 'autoupdate' da HotAPI.
     /// </summary>
@@ -280,7 +281,7 @@ public class HotAPIServer : SelfHostedService {
                 size = f.Length;
                 f.Close();
             } catch (Exception e) {
-                Log.LogError(e, "Erro ao salvar arquivo da atualização \" + tmpfile + \".");
+                Log.LogError(e, "Erro ao salvar arquivo da atualização \"" + tmpfile + "\".");
             }
 
             // Se salvou o arquivo corretamente
