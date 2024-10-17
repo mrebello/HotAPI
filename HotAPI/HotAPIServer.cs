@@ -1,5 +1,5 @@
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Hot;
 
@@ -105,6 +105,7 @@ public class HotAPIServer : SelfHostedService {
 
         b.Configuration.AddConfiguration(HotConfiguration.configuration);
         b.Services.AddLogging(HotLog.LoggingCreate);
+        b.Services.AddSingleton<IApiDescriptionGroupCollectionProvider>(s => new HotApiDescriptionGroupCollectionProvider(s));
 
         if (Config["HotAPI:Builder:SwaggerGen"]!.ToBool()) {
             Action<SwaggerGenOptions>? optSwaggerGen = options => {
@@ -135,12 +136,7 @@ public class HotAPIServer : SelfHostedService {
                 //    Description = Config[ConfigConstants.ServiceDescription],
                 //});
             };
-            if (!Config["HotAPI:Builder:SwaggerDefaultMethod"]!.IsNullOrEmpty()) {  // Se SwaggerDefaultMethod não é vazio, usa SwaggerGen modificado, senão usa o original
-                b.Services.AddSwaggerGen_Mod(optSwaggerGen);
-            } else {
-                b.Services.AddSwaggerGen(optSwaggerGen);
-            }
-
+            b.Services.AddSwaggerGen(optSwaggerGen);
         }
 
         Action<MvcOptions>? optMvc = o => {
@@ -219,7 +215,7 @@ public class HotAPIServer : SelfHostedService {
         if (Config["HotAPI:App:UseAuthentication"]!.ToBool())
             app.UseAuthentication();
 
-        if (Config["HotAPI:App:UseAuthorization"]!.ToBool()) { 
+        if (Config["HotAPI:App:UseAuthorization"]!.ToBool()) {
             app.UseAuthorization();
             app.MapControllers().RequireAuthorization(); // --> Colocado pelo AddMvc()
         } else {
@@ -341,7 +337,7 @@ public class HotAPIServer : SelfHostedService {
 
             var httpMethodsMetadata = endpoint.Metadata.OfType<HttpMethodMetadata>().FirstOrDefault();
             //s += httpMethodsMetadata?.HttpMethods + Environment.NewLine; // [GET, POST, ...]
-            String? rota = (endpoint as RouteEndpoint)?.RoutePattern.RawText.Envelop("(",")");
+            String? rota = (endpoint as RouteEndpoint)?.RoutePattern.RawText.Envelop("(", ")");
             s += $"{endpoint} {rota}=> {httpMethodsMetadata?.HttpMethods.Dump().TrimEnd('\n')}\n";
 
             // There are many more metadata types available...
