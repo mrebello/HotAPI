@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.OpenApi.Extensions;
+using System.ComponentModel;
 
 namespace Hot;
 
@@ -58,11 +60,14 @@ public class HotAPIServer : SelfHostedService {
     /// Filtro para Metadados de Biding do MVC
     /// </summary>
     public class RequiredBindingMetadataProvider : IBindingMetadataProvider {
+        static bool SwaggerAutoBindRequired = Config["HotAPI:Builder:SwaggerAutoBindingRequired"]!.ExpandConfig().ToBool();
         void IBindingMetadataProvider.CreateBindingMetadata(BindingMetadataProviderContext context) {
-            var p = context.Key.ParameterInfo;
-            if (p != null) {
-                if (p.HasDefaultValue == false)
-                    context.BindingMetadata.IsBindingRequired = true;
+            if (SwaggerAutoBindRequired) {
+                var p = context.Key.ParameterInfo;
+                if (p != null) {
+                    if (p.HasDefaultValue == false)
+                        context.BindingMetadata.IsBindingRequired = true;
+                }
             }
         }
     }
@@ -71,9 +76,13 @@ public class HotAPIServer : SelfHostedService {
     /// Filtro para Parâmetros do SwaggerUI
     /// </summary>
     class Opt_SwaggerParameterFilter : IParameterFilter {
+        static bool SwaggerAutoBindRequired = Config["HotAPI:Builder:SwaggerAutoBindingRequired"]!.ExpandConfig().ToBool();
         void IParameterFilter.Apply(OpenApiParameter parameter, ParameterFilterContext context) {
-            if (parameter.Schema.Default == null)
-                parameter.Required = true;
+            if (SwaggerAutoBindRequired) {
+
+                if (parameter.Schema.Default == null)
+                    parameter.Required = true;
+            }
         }
     }
 
@@ -85,6 +94,25 @@ public class HotAPIServer : SelfHostedService {
                     .ToList().ForEach(x => swaggerDoc.Paths.Remove(x.Key));
         }
     }
+
+
+    class Opt_SwaggerOperationFilter : IOperationFilter {
+        static bool SwaggerAutoNullable = Config["HotAPI:Builder:SwaggerAutoNullable"]!.ExpandConfig().ToBool();
+        public void Apply(OpenApiOperation operation, OperationFilterContext context) {
+            if (SwaggerAutoNullable) {
+                // Ajusta retorno de nullable
+                var t = context.MethodInfo.ReturnType;
+                bool return_nullable = (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
+                foreach (var item in operation.Responses) {
+                    foreach (var item1 in item.Value.Content) {
+                        if (return_nullable) item1.Value.Schema.Nullable = true;
+                    }
+
+                }
+            }
+        }
+    }
+
 
     ///// <summary>
     ///// Lista métodos encontrados
@@ -129,6 +157,7 @@ public class HotAPIServer : SelfHostedService {
                     options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 
                 options.DocumentFilter<Opt_SwaggerDocumentFilter>();
+                options.OperationFilter<Opt_SwaggerOperationFilter>();
 
                 //options.SwaggerDoc(Config[ConfigConstants.Version], new OpenApiInfo {
                 //    Version = Config[ConfigConstants.Version],

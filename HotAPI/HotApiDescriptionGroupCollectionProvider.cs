@@ -33,7 +33,6 @@ public class HotApiDescriptionGroupCollectionProvider : IApiDescriptionGroupColl
             List<ApiDescription> lad = new();
             foreach (var ad in item.Items) {
                 if (ad.HttpMethod == null && !SwaggerDefaultMethod.IsNullOrEmpty()) ad.HttpMethod = SwaggerDefaultMethod;
-
                 lad.Add(ad);
             }
 
