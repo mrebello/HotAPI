@@ -103,9 +103,32 @@ public class HotAPIServer : SelfHostedService {
                 // Ajusta retorno de nullable
                 var t = context.MethodInfo.ReturnType;
                 bool return_nullable = (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
+
+                // O ajuste acima não vale para tipos complexos (retorno de classe com ? no final - nullável)
+                MethodInfo method = context.MethodInfo;
+                // -- ISSO A GLOBO NÃO MOSTRA!!!!!
+                // 
+                // Para saber se o método é nulável, deve verificar:  (descoberto no Copilot + depuração)
+                // ((RuntimeParameterInfo) method.ReturnTypeCustomAttributes).Member.CustomAttributes.First().ConstructorArguments[0] == 2
+                // Porém RuntimeParameterInfo não é acessível, então deve-se usar reflection para acessar o valor   
+                try {
+                    var x = method.ReturnTypeCustomAttributes.GetType().GetProperty("Member").GetValue(method.ReturnTypeCustomAttributes);
+                    var x2 = ((IEnumerable)x.GetType().GetProperty("CustomAttributes").GetValue(x));
+                    foreach (object x3 in x2) {
+                        var x4 = ((IEnumerable)x3.GetType().GetProperty("ConstructorArguments").GetValue(x3));
+                        foreach (object x5 in x4) {
+                            var x6 = ((CustomAttributeTypedArgument)x5).Value;
+                            if (((x6 as byte?) ?? 0) == 2) return_nullable = true;
+                        }
+                    }
+                } catch (Exception) {
+                }
+                // ----
+
                 foreach (var item in operation.Responses) {
                     foreach (var item1 in item.Value.Content) {
-                        if (return_nullable) item1.Value.Schema.Nullable = true;
+                        if (return_nullable)
+                            item1.Value.Schema.Nullable = true;
                     }
 
                 }
@@ -113,6 +136,19 @@ public class HotAPIServer : SelfHostedService {
         }
     }
 
+
+    public class Opt_SwaggerNullableSchemaFilter : ISchemaFilter {
+        static bool SwaggerAutoNullable = Config["HotAPI:Builder:SwaggerAutoNullable"]!.ExpandConfig().ToBool();
+
+        public void Apply(OpenApiSchema schema, SchemaFilterContext context) {
+            if (SwaggerAutoNullable) {
+                // Ajusta retorno de nullable
+                if (context.Type.IsGenericType && context.Type.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+                    schema.Nullable = true;
+                }
+            }
+        }
+    }
 
     ///// <summary>
     ///// Lista métodos encontrados
@@ -158,6 +194,10 @@ public class HotAPIServer : SelfHostedService {
 
                 options.DocumentFilter<Opt_SwaggerDocumentFilter>();
                 options.OperationFilter<Opt_SwaggerOperationFilter>();
+                options.SchemaFilter<Opt_SwaggerNullableSchemaFilter>();
+                options.UseAllOfForInheritance();
+                options.UseAllOfToExtendReferenceSchemas();
+
 
                 //options.SwaggerDoc(Config[ConfigConstants.Version], new OpenApiInfo {
                 //    Version = Config[ConfigConstants.Version],
