@@ -197,6 +197,7 @@ public class HotAPIServer : SelfHostedService {
                 options.SchemaFilter<Opt_SwaggerNullableSchemaFilter>();
                 options.UseAllOfForInheritance();
                 options.UseAllOfToExtendReferenceSchemas();
+                options.SupportNonNullableReferenceTypes();
 
 
                 //options.SwaggerDoc(Config[ConfigConstants.Version], new OpenApiInfo {
