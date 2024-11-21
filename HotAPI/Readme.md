@@ -23,6 +23,10 @@ Foi adicionado um filtro para adicionar o IsNullable para os métodos que retorn
 
 Com isso, a API exposta fica com um comportamento idêntico à assinatura do método declarado no C# (junto com BindRequired).
 
+## SwaggerDefaultParameterFrom
+O padrão do .NET para parâmetros que não possuem a origem do parâmetro é [FromQuery] para os tipos primitivos.
+Esta opção troca o padrão para [FromForm] ou outro ("Form", "Query" ou "Header" aceitos).
+
 ## Documentação
 
 Para a geração da documentação é utilizada a documentação de API do próprio Visual Studio.

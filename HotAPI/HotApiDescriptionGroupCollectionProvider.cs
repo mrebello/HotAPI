@@ -32,7 +32,7 @@ public class HotApiDescriptionGroupCollectionProvider : IApiDescriptionGroupColl
             "Form" => BindingSource.Form,
             "Query" => BindingSource.Query,
             "Header" => BindingSource.Header,
-            _ => throw new Exception("HotAPI:Builder:SwaggerDefaultParameterFrom deve ser Form or Query")
+            _ => throw new Exception("HotAPI:Builder:SwaggerDefaultParameterFrom deve ser Form, Query ou Header")
         };
 
         var v = g.Version;
