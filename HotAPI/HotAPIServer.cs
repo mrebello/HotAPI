@@ -78,6 +78,7 @@ public class HotAPIServer : SelfHostedService {
     class Opt_SwaggerParameterFilter : IParameterFilter {
         static bool SwaggerAutoBindRequired = Config["HotAPI:Builder:SwaggerAutoBindingRequired"]!.ExpandConfig().ToBool();
         void IParameterFilter.Apply(OpenApiParameter parameter, ParameterFilterContext context) {
+
             if (SwaggerAutoBindRequired) {
 
                 if (parameter.Schema.Default == null)
