@@ -63,6 +63,7 @@ Opções disponíveis para a HotAPI (com os valores defaults embutidos na DLL)
           "SwaggerDefaultMethod": "POST" // Método default ("GET","PUT" ou "POST". Se vazio, não assume default) para a UI caso método não possua atributo de método http definido
           "SwaggerAutoBindingRequired": true, // define IsBindedRequired para parâmetros que não possuem valor default
           "SwaggerAutoNullable": true, // define IsNullable para métodos que possuem retorno nullable
+          "SwaggerDefaultParameterFrom": "Form" // Define FromForm como padrão de bind para parâmetros de tipos simples (ao invés do padrão FromQuery. Pode ser "Form", "Query" ou "Header"
         },
         "App": {
           "Swagger": true,
