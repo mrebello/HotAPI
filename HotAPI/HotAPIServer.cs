@@ -170,7 +170,8 @@ public class HotAPIServer : SelfHostedService {
 
         b.Configuration.AddConfiguration(HotConfiguration.configuration);
         b.Services.AddLogging(HotLog.LoggingCreate);
-        b.Services.AddSingleton<IApiDescriptionGroupCollectionProvider>(s => new HotApiDescriptionGroupCollectionProvider(s));
+        b.Services.AddSingleton<IApiDescriptionGroupCollectionProvider, HotApiDescriptionGroupCollectionProvider>();
+//        b.Services.AddSingleton<IApiDescriptionGroupCollectionProvider>(s => new HotApiDescriptionGroupCollectionProvider(s));
 
         if (Config["HotAPI:Builder:SwaggerGen"]!.ToBool()) {
             Action<SwaggerGenOptions>? optSwaggerGen = options => {

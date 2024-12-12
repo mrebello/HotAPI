@@ -1,30 +1,62 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Hot;
 
 public class HotApiDescriptionGroupCollectionProvider : IApiDescriptionGroupCollectionProvider {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly Type _type;
-    private IApiDescriptionGroupCollectionProvider? _defaultModelProvider;
-    private IApiDescriptionGroupCollectionProvider DefaultModelProvider => _defaultModelProvider
-                                                                  ??= _serviceProvider.GetServices<IApiDescriptionGroupCollectionProvider>()
-                                                                                      .First(x => x.GetType() == _type);
+    private IApiDescriptionGroupCollectionProvider DefaultModelProvider;
+//    private readonly IServiceProvider _serviceProvider;
+//    private readonly Type _type;
+//    private IApiDescriptionGroupCollectionProvider? _defaultModelProvider;
+//    private IApiDescriptionGroupCollectionProvider DefaultModelProvider {
+//        get {
+//        if (_defaultModelProvider is null) {
+//            var x = _serviceProvider.GetServices<IApiDescriptionGroupCollectionProvider>();
+//            _defaultModelProvider = x.FirstOrDefault(x => x.GetType() == _type);
+
+    //            if (_defaultModelProvider is null) {
+    //                var serviceCollection = new ServiceCollection();
+    //                var serviceProvider = serviceCollection.BuildServiceProvider();
+    //                _defaultModelProvider = serviceProvider.GetService<IApiDescriptionGroupCollectionProvider>();
+
+    //                if (_defaultModelProvider == null) throw new Exception("ApiDescriptionGroups não encontrado");
+    //            }
+    //        }
+    //        return _defaultModelProvider;
+    //    }
+    //}
 
     ApiDescriptionGroupCollection? groupCollection;
 
-    public HotApiDescriptionGroupCollectionProvider(IServiceProvider serviceProvider) {
-        _serviceProvider = serviceProvider;
-        // Microsoft.AspNetCore.Mvc.ApplicationModels.DefaultApplicationModelProvider;
-        _type = Type.GetType("Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescriptionGroupCollectionProvider, Microsoft.AspNetCore.Mvc.ApiExplorer")!;
-        Debug.Assert(_type != null);
+    public HotApiDescriptionGroupCollectionProvider(IServiceProvider serviceProvider,
+                IActionDescriptorCollectionProvider actionDescriptorCollectionProvider,
+                IEnumerable<IApiDescriptionProvider> apiDescriptionProviders) {
+        //var x2 = serviceProvider.GetServices<IApiDescriptionGroupCollectionProvider>();
+        
+        IApiDescriptionGroupCollectionProvider?  x = null;
+        
+        //  como pegar o serviço definido anteriormente desse mesmo tipo?
+
+        if (x==null) {
+            x = new ApiDescriptionGroupCollectionProvider(actionDescriptorCollectionProvider, apiDescriptionProviders);
+        }
+        DefaultModelProvider = x;
+        
+        //_serviceProvider = serviceProvider;
+        //// Microsoft.AspNetCore.Mvc.ApplicationModels.DefaultApplicationModelProvider;
+        //_type = Type.GetType("Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescriptionGroupCollectionProvider, Microsoft.AspNetCore.Mvc.ApiExplorer")!;
+        //Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescriptionGroupCollectionProvider t = new ApiDescriptionGroupCollectionProvider(actionDescriptorCollectionProvider, apiDescriptionProviders);
+        //_defaultModelProvider = t;
+        //Debug.Assert(_type != null);
     }
 
     public ApiDescriptionGroupCollection ApiDescriptionGroups => groupCollection ??= novo();
 
     ApiDescriptionGroupCollection novo() {
         ApiDescriptionGroupCollection g = DefaultModelProvider.ApiDescriptionGroups;
+        if (g == null) throw new Exception("***ApiDescriptionGroups não encontrado***");
 
         string SwaggerDefaultMethod = Config["HotAPI:Builder:SwaggerDefaultMethod"]!;
         var SwaggerDefaultParameterFrom = Config["HotAPI:Builder:SwaggerDefaultParameterFrom"] switch {
